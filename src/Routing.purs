@@ -2,12 +2,12 @@ module Routing where
 
 import Prelude
 
+import Data.Array (uncons)
 import Data.Int as I
 import Data.Maybe (Maybe(..))
 import Data.Number as N
-import Data.String (Pattern(..), stripPrefix)
+import Data.String (Pattern(..), joinWith, split, stripPrefix)
 import Data.Tuple (Tuple(..), fst)
-
 
 class Route a b c | a -> b, b -> c where
   run :: b -> String -> a -> Maybe (Tuple c String)
@@ -25,7 +25,12 @@ instance constantRouteRoute :: Route (ConstantRoute) a a where
   run input str (ConstantRoute constStr) = map (\str' -> Tuple input str') $ stripPrefix (Pattern $ constStr <> "/") str
 
 instance parseRouteRoute :: Route (ParseRoute b) (b -> a) a where
-  run f str (ParseRoute parser) = map (\x -> Tuple (f x) str) $ parser str
+  run f str (ParseRoute parser) = 
+    case uncons splitStr of
+      Just {head : x, tail : xs} -> map (\x -> Tuple (f x) (joinWith "/" xs)) $ parser x
+      Nothing -> Nothing
+    where
+    splitStr = split (Pattern "/") str
 
 instance combinedRouteToute :: (Route a b c, Route d c e) => Route (CombinedRoute a d) b e where
   run input str (CombinedRoute(Tuple r1 r2)) = do
@@ -33,8 +38,8 @@ instance combinedRouteToute :: (Route a b c, Route d c e) => Route (CombinedRout
     t2 <- run a str' r2
     Just $ t2
     where 
-      runRoute1 :: Maybe (Tuple c String)
-      runRoute1 = run input str r1
+    runRoute1 :: Maybe (Tuple c String)
+    runRoute1 = run input str r1
 
 constantR :: String -> ConstantRoute
 constantR name = ConstantRoute name
