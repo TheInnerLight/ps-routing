@@ -8,10 +8,10 @@ import Data.Maybe (fromMaybe)
 import Routing ((</>), constantR, numberR)
 import Routing as R
 
-testHandler :: forall e. Number -> Number -> Eff (console :: CONSOLE | e) Unit
+testHandler :: ∀ e. Number -> Number -> Eff (console :: CONSOLE | e) Unit
 testHandler x y = log $ "Did some shit " <> show x <> " " <> show y
 
-main :: forall e. Eff (console :: CONSOLE | e) Unit
+main :: ∀ e. Eff (console :: CONSOLE | e) Unit
 main = do
   let combined = constantR "test" </> numberR </> numberR
   let result = R.runRoute (testHandler) "test/21.7e6/1" combined
