@@ -1,7 +1,6 @@
 module Test.Paths where
 
 import Prelude
-
 import Data.Maybe (Maybe(..))
 import Data.Tuple (Tuple(..))
 import Paths (booleanPath, constantPath, intPath, numberPath, runRoute, stringPath, (</>))

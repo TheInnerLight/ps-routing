@@ -24,6 +24,6 @@ formattedDateTimeR formatter =
   ParsePath (hush <<< FDT.unformat formatter)
 
 -- | Accepts a route of the form YYYY-MM-DD
-yearMonthDayR :: ParsePath Date 
-yearMonthDayR =
+yearMonthDayPath :: ParsePath Date 
+yearMonthDayPath =
   ParsePath (map (date) <<< hush <<< FDT.unformat yearMonthDayFormatter)
