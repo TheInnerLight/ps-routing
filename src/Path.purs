@@ -44,34 +44,34 @@ instance combinedPathPoute :: (Path a b c, Path d c e) => Path (CombinedPath a d
     Just $ t2  
 
 -- | Accepts a path that exactly matches the supplied string
-constantR :: String -> ConstantPath
-constantR name = ConstantPath name
+constantPath :: String -> ConstantPath
+constantPath name = ConstantPath name
 
 -- | Accepts a path that matches any Int
-intR :: ParsePath Int
-intR = ParsePath (I.fromString)
+intPath :: ParsePath Int
+intPath = ParsePath (I.fromString)
 
 -- | Accepts a path that matches any Number
-numberR :: ParsePath Number
-numberR = ParsePath (N.fromString)
+numberPath :: ParsePath Number
+numberPath = ParsePath (N.fromString)
 
 -- | Accepts a path that matches any String
-stringR :: ParsePath String
-stringR = ParsePath (Just)
+stringPath :: ParsePath String
+stringPath = ParsePath (Just)
 
 -- | Accepts a path that matches any Boolean
-booleanR :: ParsePath Boolean
-booleanR = ParsePath (\str -> case str of
+booleanPath :: ParsePath Boolean
+booleanPath = ParsePath (\str -> case str of
   "true"  -> Just true
   "false" -> Just false
   _       -> Nothing
   )
 
 --- | Combine two path together, separated by a "/"
-combineR :: ∀ a b c d e . Path a b c => Path d c e => a -> d -> CombinedPath a d
-combineR a b = CombinedPath (Tuple a b)
+combinePath :: ∀ a b c d e . Path a b c => Path d c e => a -> d -> CombinedPath a d
+combinePath a b = CombinedPath (Tuple a b)
 
-infixr 4 combineR as </>
+infixr 4 combinePath as </>
 
 runRoute :: ∀ a b c. Path a b c => b -> String -> a -> Maybe c
 runRoute x str v = 
