@@ -3,7 +3,8 @@ module Test.Paths where
 import Prelude
 
 import Data.Maybe (Maybe(..))
-import Paths (booleanPath, constantPath, intPath, numberPath, runRoute, stringPath)
+import Data.Tuple (Tuple(..))
+import Paths (booleanPath, constantPath, intPath, numberPath, runRoute, stringPath, (</>))
 import Test.Spec (Spec, describe, it)
 import Test.Spec.Assertions (shouldEqual)
 import Test.Spec.Runner (RunnerEffects)
@@ -63,6 +64,25 @@ booleanPathTests =
       let testPath = numberPath
       runRoute id "a" testPath `shouldEqual` Nothing
 
+combinedPathTests :: ∀ e. Spec (RunnerEffects e) Unit
+combinedPathTests = 
+  describe "combinedPathTests" do
+    it "returns Just of the supplied values when the supplied path matches" do
+      let testPath = constantPath "test1" </> numberPath </> intPath </> constantPath "enterprise"
+      runRoute (\i n -> Tuple i n) "test1/13.175/7/enterprise" testPath `shouldEqual` Just (Tuple 13.175 7)
+    it "returns Nothing when the first value in the supplied math doesn't match" do
+      let testPath = constantPath "test1" </> numberPath </> intPath </> constantPath "enterprise"
+      runRoute (\i n -> Tuple i n) "test2/13.175/7/enterprise" testPath `shouldEqual` Nothing
+    it "returns Nothing when the second value in the supplied math doesn't match" do
+      let testPath = constantPath "test1" </> numberPath </> intPath </> constantPath "enterprise"
+      runRoute (\i n -> Tuple i n) "test1/z/7/enterprise" testPath `shouldEqual` Nothing
+    it "returns Nothing when the third value in the supplied math doesn't match" do
+      let testPath = constantPath "test1" </> numberPath </> intPath </> constantPath "enterprise"
+      runRoute (\i n -> Tuple i n) "test1/13.175/z/enterprise" testPath `shouldEqual` Nothing
+    it "returns Nothing when the fourth value in the supplied math doesn't match" do
+      let testPath = constantPath "test1" </> numberPath </> intPath </> constantPath "enterprise"
+      runRoute (\i n -> Tuple i n) "test1/13.175/6/excelsior" testPath `shouldEqual` Nothing
+
 pathTests :: ∀ e. Spec (RunnerEffects e) Unit
 pathTests = do
   constantPathTests
@@ -70,3 +90,4 @@ pathTests = do
   numberPathTests
   stringPathTests
   booleanPathTests
+  combinedPathTests
