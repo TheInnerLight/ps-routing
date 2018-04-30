@@ -1,12 +1,11 @@
 module Main where
 
 import Prelude
-
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log)
 import Data.Maybe (fromMaybe)
-import Routing ((</>), constantR, numberR)
-import Routing as R
+import Paths ((</>), constantR, numberR)
+import Paths as R
 
 testHandler :: ∀ e. Number -> Number -> Eff (console :: CONSOLE | e) Unit
 testHandler x y = log $ "Did some shit " <> show x <> " " <> show y
