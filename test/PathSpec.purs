@@ -3,7 +3,7 @@ module Test.Paths where
 import Prelude
 
 import Data.Maybe (Maybe(..))
-import Paths (constantPath, intPath, numberPath, runRoute)
+import Paths (booleanPath, constantPath, intPath, numberPath, runRoute, stringPath)
 import Test.Spec (Spec, describe, it)
 import Test.Spec.Assertions (shouldEqual)
 import Test.Spec.Runner (RunnerEffects)
@@ -34,7 +34,7 @@ intPathTests =
 
 numberPathTests :: ∀ e. Spec (RunnerEffects e) Unit
 numberPathTests = 
-  describe "intPath" do
+  describe "numberPath" do
     it "returns Just of the supplied value when the supplied path is an integer number" do
       let testPath = numberPath
       runRoute id "2" testPath `shouldEqual` Just 2.0
@@ -45,8 +45,28 @@ numberPathTests =
       let testPath = numberPath
       runRoute id "a" testPath `shouldEqual` Nothing
 
+
+stringPathTests :: ∀ e. Spec (RunnerEffects e) Unit
+stringPathTests = 
+  describe "stringPath" do
+    it "returns Just of the supplied value" do
+      let testPath = stringPath
+      runRoute id "a" testPath `shouldEqual` Just "a"
+
+booleanPathTests :: ∀ e. Spec (RunnerEffects e) Unit
+booleanPathTests = 
+  describe "booleanPath" do
+    it "returns Just of the supplied value when the supplied path is a boolean" do
+      let testPath = booleanPath
+      runRoute id "true" testPath `shouldEqual` Just true
+    it "returns Nothing when the supplied value does not match" do
+      let testPath = numberPath
+      runRoute id "a" testPath `shouldEqual` Nothing
+
 pathTests :: ∀ e. Spec (RunnerEffects e) Unit
 pathTests = do
   constantPathTests
   intPathTests
   numberPathTests
+  stringPathTests
+  booleanPathTests
