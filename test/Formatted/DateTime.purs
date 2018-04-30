@@ -2,11 +2,9 @@ module Tests.Paths.Formatted.DateTime where
 
 import Prelude
 
-import Data.Date (Date, canonicalDate)
-import Data.Date.Component (Day, Month(..), Year(..))
+import Data.Date (canonicalDate)
 import Data.Enum (toEnum)
 import Data.Maybe (Maybe(..), fromJust)
-import Data.Tuple (Tuple(..))
 import Partial.Unsafe (unsafePartial)
 import Paths (runRoute)
 import Paths.Formatted.DateTime (yearMonthDayPath)
