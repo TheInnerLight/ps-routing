@@ -13,6 +13,6 @@ install:
   - npm install
 script:
   - bower install --production
-  - npm run -s build
+  - pulp build
   - bower install
-  - npm -s test
+  - pulp test

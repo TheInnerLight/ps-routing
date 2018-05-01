@@ -1,5 +1,5 @@
 {
-  "name": "PsRouting",
+  "name": "ps-routing",
   "ignore": [
     "**/.*",
     "node_modules",
