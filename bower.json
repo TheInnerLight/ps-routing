@@ -15,7 +15,8 @@
     "purescript-numbers": "^5.0.0",
     "purescript-strings": "^3.5.0",
     "purescript-datetime": "^3.4.1",
-    "purescript-formatters": "^3.0.1"
+    "purescript-formatters": "^3.0.1",
+    "purescript-transformers": "^3.6.0"
   },
   "devDependencies": {
     "purescript-psci-support": "^3.0.0",

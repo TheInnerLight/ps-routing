@@ -9,5 +9,8 @@
     "eslint": "^3.17.1",
     "pulp": "^12.2.0",
     "rimraf": "^2.6.1"
+  },
+  "dependencies": {
+    "express": "^4.16.3"
   }
 }
