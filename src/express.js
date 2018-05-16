@@ -1,4 +1,4 @@
-exports.makeApp = function() {
+exports._makeApp = function() {
     var express = require('express');
     return express();
 }
@@ -30,7 +30,9 @@ exports._getPath = function (req) {
 exports._get = function (app) {
     return function (handler)  {
         return function () {
-            return app.get("*", handler)
+            return app.get("*", function(req, resp) {
+                return handler(req)(resp)();
+            });
         }
     }
 }
