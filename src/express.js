@@ -20,7 +20,6 @@ exports._listenHttp = function(app) {
     }
 }
 
-
 exports._getPath = function (req) {
     return function () {
         return req.path;

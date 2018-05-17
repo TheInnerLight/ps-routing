@@ -8,6 +8,14 @@ exports._setHeader = function (key)  {
     }
 }
 
+exports._setStatus = function (status)  {
+    return function (resp) {
+        return function () {
+            resp.status(status);
+        }
+    }
+}
+
 exports._sendText = function (text) {
     return function (resp) {
         return function () {
