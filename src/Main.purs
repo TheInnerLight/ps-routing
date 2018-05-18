@@ -2,15 +2,15 @@ module Main where
 
 import Prelude
 
-import Control.Monad.Aff (Aff, launchAff_)
+import Control.Monad.Aff (launchAff_)
 import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Class (class MonadEff, liftEff)
+import Control.Monad.Eff.Class (liftEff)
 import Control.Monad.Eff.Console (CONSOLE, log)
 import Express (ExpressHandler, listenHttp)
 import Express.Effect (EXPRESS)
-import Express.Response (Response(..), ok, text)
+import Express.Response (ok, text)
 
-endpoint :: ∀ e a. ExpressHandler (console :: CONSOLE | e) a
+endpoint :: ∀ e. ExpressHandler (console :: CONSOLE | e)
 endpoint = do
   _ <- liftEff $ log "Received endpoint request"
   pure $ ok $ text "Hi test!" 
