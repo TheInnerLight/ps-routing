@@ -5,7 +5,7 @@ import Prelude
 import Control.Monad.Eff (Eff)
 import Data.Foldable (traverse_)
 import Express.Effect (EXPRESS)
-import Express.Status (BAD_REQUEST, NOT_FOUND, OK, kind Status)
+import Express.Http (BAD_REQUEST, NOT_FOUND, OK, kind Status)
 
 data Header
   = Other String String

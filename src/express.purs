@@ -10,9 +10,9 @@ import Control.Monad.Eff.Class (class MonadEff, liftEff)
 import Control.Monad.Reader (ReaderT, runReaderT)
 import Control.Monad.Reader as MR
 import Express.Effect (EXPRESS)
+import Express.Request (ExRequest, Request(..), makeRequest)
 import Express.Response (EResponse, Response, genNativeResponse)
 
-foreign import data Request :: Type
 foreign import data ExpressApp :: Type
 
 -- | An express handler is a type capable of reading an http request, performing asynchonrous effects and which ultimately returns an http response
@@ -30,14 +30,14 @@ get = do
   response <- liftEff $ _get app (\_ _ -> pure unit)
   pure response
 
-genCallback :: ∀ e r b . ExpressHandler e r -> (Request -> EResponse -> Eff (express :: EXPRESS | e) Unit)
+genCallback :: ∀ e r b . ExpressHandler e r -> (ExRequest -> EResponse -> Eff (express :: EXPRESS | e) Unit)
 genCallback f =
-  \req resp -> launchAff_ $ runReaderT2 req $ do
+  \req resp -> launchAff_ $ runReaderT2 (makeRequest req) $ do
     r <- MR.ask f
     x <- liftEff $ genNativeResponse r resp
     pure x 
   where runReaderT2 = flip runReaderT
 
 foreign import _makeApp :: ∀ e . Eff (express :: EXPRESS | e) ExpressApp
-foreign import _get :: ∀ e . ExpressApp -> (Request -> EResponse -> Eff (express :: EXPRESS | e) Unit) -> Eff (express :: EXPRESS | e) EResponse
+foreign import _get :: ∀ e . ExpressApp -> (ExRequest -> EResponse -> Eff (express :: EXPRESS | e) Unit) -> Eff (express :: EXPRESS | e) EResponse
 foreign import _listenHttp :: ∀ e m. ExpressApp -> Int -> EffFnAff (express :: EXPRESS | e) Unit

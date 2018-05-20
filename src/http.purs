@@ -1,4 +1,4 @@
-module Express.Status where
+module Express.Http where
 
 foreign import kind Status
 foreign import data OK :: Status
