@@ -8,8 +8,12 @@ import Data.Number as N
 import Data.String (Pattern(Pattern), split)
 import Data.Tuple (Tuple(..), fst)
 
+-- a is the path type
+-- b is the accumulated set of arguments - it is either c or a curried function that ultimately returns c
+-- c is the resulting type
 class Path a b c | a -> b, b -> c where
   run :: b -> Array String -> a -> Maybe (Tuple c (Array String))
+
 
 -- | The type of constant paths
 data ConstantPath
@@ -37,7 +41,7 @@ instance parsePathPath :: Path (ParsePath b) (b -> a) a where
 instance parsePathFunctor :: Functor ParsePath where
   map f (ParsePath p) = ParsePath (map (f) <<< p)
 
-instance combinedPathPoute :: (Path a b c, Path d c e) => Path (CombinedPath a d) b e where
+instance combinedPathPath :: (Path a b c, Path d c e) => Path (CombinedPath a d) b e where
   run input arr (CombinedPath(Tuple r1 r2)) = do
     Tuple a arr' <- run input arr r1
     t2 <- run a arr' r2

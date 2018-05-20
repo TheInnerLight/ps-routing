@@ -15,9 +15,10 @@ import Express.Response (EResponse, Response, genNativeResponse)
 foreign import data Request :: Type
 foreign import data ExpressApp :: Type
 
-type ExpressHandler e = ReaderT Request (Aff (express :: EXPRESS | e)) Response
+-- | An express handler is a type capable of reading an http request, performing asynchonrous effects and which ultimately returns an http response
+type ExpressHandler e r = ReaderT Request (Aff (express :: EXPRESS | e)) (Response r)
 
-listenHttp :: ∀ e m b. ExpressHandler e -> MonadAff (express :: EXPRESS | e) m => Int -> m Unit
+listenHttp :: ∀ e r m b. ExpressHandler e r -> MonadAff (express :: EXPRESS | e) m => Int -> m Unit
 listenHttp f port = do
   app <- liftEff _makeApp
   _ <- liftEff $ _get app $ genCallback f
@@ -29,7 +30,7 @@ get = do
   response <- liftEff $ _get app (\_ _ -> pure unit)
   pure response
 
-genCallback :: ∀ e b . ExpressHandler e -> (Request -> EResponse -> Eff (express :: EXPRESS | e) Unit)
+genCallback :: ∀ e r b . ExpressHandler e r -> (Request -> EResponse -> Eff (express :: EXPRESS | e) Unit)
 genCallback f =
   \req resp -> launchAff_ $ runReaderT2 req $ do
     r <- MR.ask f
