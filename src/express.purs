@@ -7,16 +7,18 @@ import Control.Monad.Aff.Class (class MonadAff, liftAff)
 import Control.Monad.Aff.Compat (EffFnAff, fromEffFnAff)
 import Control.Monad.Eff (Eff, kind Effect)
 import Control.Monad.Eff.Class (class MonadEff, liftEff)
+import Control.Monad.Except (ExceptT(..), runExceptT)
 import Control.Monad.Reader (ReaderT, runReaderT)
 import Control.Monad.Reader as MR
 import Express.Effect (EXPRESS)
+import Express.Http (HttpError)
 import Express.Request (ExRequest, Request(..), makeRequest)
 import Express.Response (EResponse, Response, genNativeResponse)
 
 foreign import data ExpressApp :: Type
 
 -- | An express handler is a type capable of reading an http request, performing asynchonrous effects and which ultimately returns an http response
-type ExpressHandler e r = ReaderT Request (Aff (express :: EXPRESS | e)) (Response r)
+type ExpressHandler e r = ExceptT HttpError (ReaderT Request (Aff (express :: EXPRESS | e))) (Response r)
 
 listenHttp :: ∀ e r m b. ExpressHandler e r -> MonadAff (express :: EXPRESS | e) m => Int -> m Unit
 listenHttp f port = do
@@ -32,7 +34,7 @@ get = do
 
 genCallback :: ∀ e r b . ExpressHandler e r -> (ExRequest -> EResponse -> Eff (express :: EXPRESS | e) Unit)
 genCallback f =
-  \req resp -> launchAff_ $ runReaderT2 (makeRequest req) $ do
+  \req resp -> launchAff_ $ runReaderT2 (makeRequest req) $ runExceptT $ do
     r <- MR.ask f
     x <- liftEff $ genNativeResponse r resp
     pure x 

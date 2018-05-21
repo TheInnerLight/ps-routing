@@ -1,3 +1,4 @@
 exports._getPath = function (req) {
-    req.path
+    console.log(req.path);
+    return req.path;
 }

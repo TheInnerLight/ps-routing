@@ -3,41 +3,31 @@ module Express.Endpoint(Endpoint, mkEndpoint, createHandler) where
 import Prelude
 
 import Control.Monad.Eff (kind Effect)
+import Control.Monad.Eff.Exception (error)
+import Control.Monad.Error.Class (throwError)
 import Control.Monad.Reader (ask)
-import Data.Exists (Exists, mkExists, runExists)
+import Data.Either (Either(..))
+import Data.Maybe (Maybe(..), fromMaybe)
+import Data.String (Pattern(..), stripPrefix)
 import Express (ExpressHandler)
-import Express.Http (NOT_FOUND, kind Status)
-import Express.Request (Request(..), pathOf)
-import Express.Response (notFound, ok, text)
-import Paths (class Path)
+import Express.Http (HttpError(..), NOT_FOUND, kind Status)
+import Express.Request (pathOf)
+import Express.Response (notFound, text)
+import Paths (class Path, runRoute)
 
-newtype InternalEndpoint h p = InternalEndpoint
-  { path :: p
-  , handler :: h
-  }
+newtype Endpoint eff s = HiddenEndpoint (ExpressHandler eff s) 
 
-newtype EndpointIntermediate h = EndpointIntermediate (Exists (InternalEndpoint h))
-
-newtype Endpoint (effects:: #Effect) (statuses :: #Status) = Endpoint (Exists EndpointIntermediate)
-
-mkEndpoint :: forall p h eff r. Path p h (ExpressHandler eff r) => {path :: p, handler :: h}  -> Endpoint eff r
-mkEndpoint {path : path, handler : handler} = Endpoint $ mkExists $ EndpointIntermediate $ mkExists $ InternalEndpoint
-  { path : path
-  , handler : handler
-  }
-
-createHandler :: forall eff r. Endpoint eff r -> (ExpressHandler eff (notFound :: NOT_FOUND | r))
-createHandler (Endpoint ep) =
-  runExists (\(EndpointIntermediate ei) -> runExists (f) ei) ep
+mkEndpoint :: forall p h eff s. Path p h (ExpressHandler eff (notFound :: NOT_FOUND | s)) => {path :: p, handler :: h} -> Endpoint eff (notFound :: NOT_FOUND | s)
+mkEndpoint {path : path, handler : handler} = HiddenEndpoint do
+  req <- ask
+  let pathStr = fixpath $ pathOf req
+  case runRoute handler pathStr path of
+    Just eh -> eh
+    Nothing -> throwError $ UnknownPath
   where 
-    f :: forall h p. InternalEndpoint h p -> (ExpressHandler eff (notFound :: NOT_FOUND | r))
-    f (InternalEndpoint {path : path, handler : handler}) = do
-      req <- ask
-      let path = pathOf req
-      pure $ notFound $ text "Not found."
+    fixpath str =
+      fromMaybe str $ stripPrefix (Pattern "/") $ str
+    
 
-
-
---endpoint :: forall p e r a. Path p a (Endpoint p (ExpressHandler e r)) => p -> a -> Endpoint p a
---endpoint path handler =
---    Endpoint {path : path, handler : handler}
+createHandler :: forall eff s. Endpoint eff s -> ExpressHandler eff s
+createHandler (HiddenEndpoint endpoint) = endpoint
