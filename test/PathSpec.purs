@@ -8,7 +8,7 @@ import Test.Spec (Spec, describe, it)
 import Test.Spec.Assertions (shouldEqual)
 import Test.Spec.Runner (RunnerEffects)
 
-constantPathTests :: ∀ e. Spec (RunnerEffects e) Unit
+constantPathTests :: forall e. Spec (RunnerEffects e) Unit
 constantPathTests = 
   describe "constantPath" do
     it "returns Just of the supplied value when the supplied path matches" do
@@ -18,7 +18,7 @@ constantPathTests =
       let testConstantPath = constantPath "cheese"
       runRoute true "biscuits" testConstantPath `shouldEqual` Nothing
 
-intPathTests :: ∀ e. Spec (RunnerEffects e) Unit
+intPathTests :: forall e. Spec (RunnerEffects e) Unit
 intPathTests = 
   describe "intPath" do
     it "returns Just of the supplied value when the supplied path is an int" do
@@ -32,7 +32,7 @@ intPathTests =
       runRoute id "1.5" testPath `shouldEqual` Nothing
 
 
-numberPathTests :: ∀ e. Spec (RunnerEffects e) Unit
+numberPathTests :: forall e. Spec (RunnerEffects e) Unit
 numberPathTests = 
   describe "numberPath" do
     it "returns Just of the supplied value when the supplied path is an integer number" do
@@ -46,14 +46,14 @@ numberPathTests =
       runRoute id "a" testPath `shouldEqual` Nothing
 
 
-stringPathTests :: ∀ e. Spec (RunnerEffects e) Unit
+stringPathTests :: forall e. Spec (RunnerEffects e) Unit
 stringPathTests = 
   describe "stringPath" do
     it "returns Just of the supplied value" do
       let testPath = stringPath
       runRoute id "a" testPath `shouldEqual` Just "a"
 
-booleanPathTests :: ∀ e. Spec (RunnerEffects e) Unit
+booleanPathTests :: forall e. Spec (RunnerEffects e) Unit
 booleanPathTests = 
   describe "booleanPath" do
     it "returns Just of the supplied value when the supplied path is a boolean" do
@@ -63,7 +63,7 @@ booleanPathTests =
       let testPath = numberPath
       runRoute id "a" testPath `shouldEqual` Nothing
 
-combinedPathTests :: ∀ e. Spec (RunnerEffects e) Unit
+combinedPathTests :: forall e. Spec (RunnerEffects e) Unit
 combinedPathTests = 
   describe "combinedPathTests" do
     it "returns Just of the supplied values when the supplied path matches" do
@@ -82,7 +82,7 @@ combinedPathTests =
       let testPath = constantPath "test1" </> numberPath </> intPath </> constantPath "enterprise"
       runRoute (\i n -> Tuple i n) "test1/13.175/6/excelsior" testPath `shouldEqual` Nothing
 
-pathTests :: ∀ e. Spec (RunnerEffects e) Unit
+pathTests :: forall e. Spec (RunnerEffects e) Unit
 pathTests = do
   constantPathTests
   intPathTests

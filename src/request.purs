@@ -9,7 +9,7 @@ newtype Request = Request {path :: String}
 pathOf :: Request -> String
 pathOf (Request req) = req.path
 
-makeRequest :: ∀ e. ExRequest -> Request
+makeRequest :: forall e. ExRequest -> Request
 makeRequest req = Request {path : _getPath req}
 
-foreign import _getPath :: ∀ e. ExRequest -> String
+foreign import _getPath :: forall e. ExRequest -> String

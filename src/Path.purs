@@ -72,12 +72,12 @@ booleanPath = ParsePath (\str -> case str of
   )
 
 --- | Combine two path together, separated by a "/"
-combinePath :: ∀ a b c d e . Path a b c => Path d c e => a -> d -> CombinedPath a d
+combinePath :: forall a b c d e . Path a b c => Path d c e => a -> d -> CombinedPath a d
 combinePath a b = CombinedPath (Tuple a b)
 
 infixr 4 combinePath as </>
 
-runRoute :: ∀ a b c. Path a b c => b -> String -> a -> Maybe c
+runRoute :: forall a b c. Path a b c => b -> String -> a -> Maybe c
 runRoute x str v = 
   map fst $ run x (split (Pattern "/") str) v
 

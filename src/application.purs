@@ -28,9 +28,9 @@ findM p xs =
         false -> skipWhileMRec p xs'
     
 
-run :: forall eff s m. MonadAff (express :: EXPRESS | eff) m => ApplicationInternal (notFound :: NOT_FOUND | s) eff -> m Unit
-run (ApplicationInternal items) =
-  listenHttp handleShit 8056
+run :: forall eff s m. MonadAff (express :: EXPRESS | eff) m => ApplicationInternal (notFound :: NOT_FOUND | s) eff -> Int -> m Unit
+run (ApplicationInternal items) port =
+  listenHttp handleShit port
   where
     handleShit = do 
       ep <- findM f items

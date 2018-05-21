@@ -34,8 +34,8 @@ endpointTest2 = mkEndpoint
 --application :: forall e. ApplicationInternal (console :: CONSOLE | e)
 application = ApplicationInternal (fromFoldable [endpointTest, endpointTest2])
 
-main :: ∀ e. Eff (console :: CONSOLE, express :: EXPRESS | e) Unit
+main :: forall e. Eff (console :: CONSOLE, express :: EXPRESS | e) Unit
 main = launchAff_ do
-  _ <- run application
+  _ <- run application 8056
   pure unit
 
