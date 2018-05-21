@@ -30,9 +30,9 @@ findM p xs =
 
 run :: forall eff s m. MonadAff (express :: EXPRESS | eff) m => ApplicationInternal (notFound :: NOT_FOUND | s) eff -> Int -> m Unit
 run (ApplicationInternal items) port =
-  listenHttp handleShit port
+  listenHttp chooseEndpoint port
   where
-    handleShit = do 
+    chooseEndpoint = do 
       ep <- findM f items
       fromMaybe (pure $ notFound $ text "Not Found!") (map (createHandler) ep)
     f endpoint = catchError (map (\_ -> true) $ createHandler endpoint) (pure <<< errorhandler)
