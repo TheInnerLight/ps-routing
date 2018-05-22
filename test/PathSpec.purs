@@ -14,9 +14,22 @@ constantPathTests =
     it "returns Just of the supplied value when the supplied path matches" do
       let testConstantPath = constantPath "test"
       runRoute true "test" testConstantPath `shouldEqual` Just true
+    it "returns Just of the supplied value when the supplied path matches" do
+      let testConstantPath = constantPath "test"
+      runRoute true "test" testConstantPath `shouldEqual` Just true
     it "returns Nothing when the supplied value does not match" do
       let testConstantPath = constantPath "cheese"
       runRoute true "biscuits" testConstantPath `shouldEqual` Nothing
+
+trailingDataTests :: forall e. Spec (RunnerEffects e) Unit
+trailingDataTests = 
+  describe "trailingPathElements" do
+    it "returns Just of the supplied value when a trailing / character is supplied" do
+      let testConstantPath = constantPath "test"
+      runRoute true "test/" testConstantPath `shouldEqual` Just true
+    it "returns Nothing when the supplied when a trailing path component is supplied" do
+      let testConstantPath = constantPath "cheese"
+      runRoute true "cheese/biscuits" testConstantPath `shouldEqual` Nothing
 
 intPathTests :: forall e. Spec (RunnerEffects e) Unit
 intPathTests = 
@@ -85,6 +98,7 @@ combinedPathTests =
 pathTests :: forall e. Spec (RunnerEffects e) Unit
 pathTests = do
   constantPathTests
+  trailingDataTests
   intPathTests
   numberPathTests
   stringPathTests

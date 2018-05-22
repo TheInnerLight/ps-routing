@@ -78,8 +78,13 @@ combinePath a b = CombinedPath (Tuple a b)
 infixr 4 combinePath as </>
 
 runRoute :: forall a b c. Path a b c => b -> String -> a -> Maybe c
-runRoute x str v = 
-  map fst $ run x (split (Pattern "/") str) v
+runRoute x str v = do
+  Tuple result leftover <- run x (split (Pattern "/") str) v
+  case leftover of
+    []   -> pure $ result
+    [""] -> pure $ result
+    _    -> Nothing
+  
 
 
 
